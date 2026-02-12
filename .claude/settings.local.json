@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.open-meteo.com)",
+      "WebFetch(domain:open-meteo.com)",
+      "Bash(node:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(python -m http.server:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(gh auth status:*)",
+      "Bash(git -C \"E:/LLMprojects/weerapp\" status)",
+      "Bash(where gh:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nVliegweer PWA - modelvliegtuig weer app\n\n14-daagse weervoorspelling met vliegweer scoring.\nPure HTML/CSS/JS PWA met Open-Meteo API.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
