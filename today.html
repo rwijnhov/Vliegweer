@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#16213e">
+  <meta name="description" content="Vliegweer voor vandaag">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+  <title>Vliegweer Vandaag</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-view="today">
+
+  <header id="app-header">
+    <h1 class="app-title">Vliegweer Vandaag</h1>
+    <div id="location-bar">
+      <span id="location-name">Locatie ophalen...</span>
+      <button id="location-btn">Wijzig</button>
+    </div>
+  </header>
+
+  <div id="location-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Locatie instellen</h2>
+      <button id="use-gps-btn">Gebruik GPS-locatie</button>
+      <div class="divider">of</div>
+      <input type="text" id="location-input" placeholder="Plaatsnaam of 52.37, 4.89">
+      <button id="save-location-btn">Opslaan</button>
+      <button id="close-modal-btn">Annuleren</button>
+    </div>
+  </div>
+
+  <div id="pull-indicator" class="pull-indicator">Vernieuwen...</div>
+
+  <main id="app-main">
+    <div id="loading" class="loading-container">
+      <svg class="loading-airplane" viewBox="0 0 200 200" fill="currentColor">
+        <g transform="translate(100,100)">
+          <rect x="-10" y="-80" width="20" height="160" rx="10"/>
+          <ellipse cx="0" cy="8" rx="90" ry="13"/>
+          <ellipse cx="0" cy="-64" rx="35" ry="7"/>
+          <rect x="-4" y="-88" width="8" height="28" rx="4"/>
+          <ellipse cx="0" cy="84" rx="18" ry="4"/>
+        </g>
+      </svg>
+      <div class="loading-text">Weerdata ophalen<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+    </div>
+
+    <div id="error-state" class="hidden">
+      <p id="error-message"></p>
+      <button id="retry-btn">Opnieuw proberen</button>
+    </div>
+
+    <div id="forecast" class="hidden">
+      <div id="day-cards"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Data: Open-Meteo.com | Laatst bijgewerkt: <span id="last-updated">--</span></p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

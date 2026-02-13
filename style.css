@@ -278,6 +278,12 @@ body {
   transform: scale(0.98);
 }
 
+.empty-day-message {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 24px;
+}
+
 /* ========== WEEK HEADINGS & CARDS ========== */
 .weekend-heading {
   font-size: 0.8rem;
