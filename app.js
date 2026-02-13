@@ -432,8 +432,37 @@ function renderForecast(days) {
 
   const container = document.getElementById('day-cards');
 
-  // Groepeer per kalenderweek (ma=start)
   const activeDays = days.filter(d => d.hourly.length > 0);
+  const todayOnly = document.body?.dataset?.view === 'today';
+
+  if (todayOnly) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayData = activeDays.find(d => isSameDay(d.date, today));
+    container.innerHTML = todayData
+      ? `<h3 class="weekend-heading">Vandaag</h3><div class="cards-row">${buildDayCardHTML(todayData, 'today')}</div>`
+      : '<p class="empty-day-message">Geen data beschikbaar voor vandaag.</p>';
+
+    container.querySelectorAll('.expand-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.nextElementSibling;
+        const isExpanded = target.classList.contains('expanded');
+        if (isExpanded) {
+          target.classList.remove('expanded');
+          btn.textContent = 'Uurlijks detail ▼';
+        } else {
+          target.classList.add('expanded');
+          btn.textContent = 'Uurlijks detail ▲';
+        }
+      });
+    });
+
+    document.getElementById('last-updated').textContent =
+      new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+    return;
+  }
+
+  // Groepeer per kalenderweek (ma=start)
   const weeks = new Map();
   activeDays.forEach(day => {
     // ISO weeknummer als key
