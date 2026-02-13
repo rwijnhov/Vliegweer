@@ -729,7 +729,7 @@ body {
 
 .hourly-header {
   display: grid;
-  grid-template-columns: 44px 36px 1fr 50px 1fr;
+  grid-template-columns: 44px 36px 1fr 52px 1.3fr 1fr;
   gap: 4px;
   padding: 6px 4px;
   font-size: 0.65rem;
@@ -742,7 +742,7 @@ body {
 
 .hourly-row {
   display: grid;
-  grid-template-columns: 44px 36px 1fr 50px 1fr;
+  grid-template-columns: 44px 36px 1fr 52px 1.3fr 1fr;
   gap: 4px;
   padding: 5px 4px;
   font-size: 0.72rem;

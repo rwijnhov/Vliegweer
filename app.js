@@ -577,6 +577,7 @@ function buildHourlyHTML(hourlyData) {
       <span>Score</span>
       <span>Wind</span>
       <span>Temp</span>
+      <span>Neerslag</span>
       <span>Weer</span>
     </div>`;
 
@@ -586,6 +587,7 @@ function buildHourlyHTML(hourlyData) {
       <span class="h-score" style="color:${scoreToColor(h.scores.overall)}">${h.scores.overall}</span>
       <span>Bft ${h.beaufort} ${h.windDirCompass}</span>
       <span>${h.temp}°C</span>
+      <span>${h.precip.toFixed(1)} mm (${h.precipProb}%)</span>
       <span>${h.weatherDesc}</span>
     </div>`).join('');
 
