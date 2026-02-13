@@ -574,20 +574,18 @@ function buildHourlyHTML(hourlyData) {
   let html = `
     <div class="hourly-header">
       <span>Uur</span>
-      <span>Score</span>
       <span>Wind</span>
       <span>Temp</span>
-      <span>Neerslag</span>
+      <span>Kans</span>
       <span>Weer</span>
     </div>`;
 
   html += hourlyData.map(h => `
     <div class="hourly-row">
       <span class="hour">${h.time}</span>
-      <span class="h-score" style="color:${scoreToColor(h.scores.overall)}">${h.scores.overall}</span>
       <span>Bft ${h.beaufort} ${h.windDirCompass}</span>
       <span>${h.temp}°C</span>
-      <span>${h.precip.toFixed(1)} mm (${h.precipProb}%)</span>
+      <span>${h.precipProb}%</span>
       <span>${h.weatherDesc}</span>
     </div>`).join('');
 
