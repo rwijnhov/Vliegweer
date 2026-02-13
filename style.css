@@ -305,6 +305,11 @@ body {
   gap: 10px;
 }
 
+.cards-row.today-row {
+  grid-template-columns: minmax(280px, 420px);
+  justify-content: center;
+}
+
 @media (min-width: 700px) {
   .cards-row {
     grid-template-columns: repeat(4, 1fr);

@@ -440,7 +440,7 @@ function renderForecast(days) {
     today.setHours(0, 0, 0, 0);
     const todayData = activeDays.find(d => isSameDay(d.date, today));
     container.innerHTML = todayData
-      ? `<h3 class="weekend-heading">Vandaag</h3><div class="cards-row">${buildDayCardHTML(todayData, 'today')}</div>`
+      ? `<h3 class="weekend-heading">Vandaag</h3><div class="cards-row today-row">${buildDayCardHTML(todayData, 'today')}</div>`
       : '<p class="empty-day-message">Geen data beschikbaar voor vandaag.</p>';
 
     container.querySelectorAll('.expand-btn').forEach(btn => {
