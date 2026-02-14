@@ -652,6 +652,12 @@ body {
   padding: 12px;
 }
 
+@media (max-width: 360px) {
+  .time-slots {
+    grid-template-columns: 1fr;
+  }
+}
+
 .slot {
   background: linear-gradient(180deg, rgba(15, 39, 74, 0.78), rgba(9, 28, 56, 0.84));
   border-radius: 12px;
