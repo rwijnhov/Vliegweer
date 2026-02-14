@@ -330,6 +330,45 @@ async function fetchWeatherData(lat, lon) {
 
 // ---------- DATA PROCESSING ----------
 
+function isRainLikeWeatherCode(code) {
+  return (code >= 51 && code <= 57) ||
+    (code >= 61 && code <= 67) ||
+    (code >= 80 && code <= 82);
+}
+
+function pickDisplayWeatherCode(dayData) {
+  if (dayData.length === 0) return 0;
+
+  // Basis: "zwaarste" code van de dag
+  const severityCode = dayData
+    .map(d => d.weatherCode)
+    .reduce((worst, c) => (c > worst ? c : worst), 0);
+
+  const maxPrecipProb = Math.max(...dayData.map(d => d.precipProb));
+  const maxPrecipMm = Math.max(...dayData.map(d => d.precip));
+
+  // Als modelcode regen zegt, maar kans én neerslag beide 0 zijn,
+  // toon liever een niet-regen code zodat banner en kans niet botsen.
+  if (isRainLikeWeatherCode(severityCode) && maxPrecipProb === 0 && maxPrecipMm === 0) {
+    const nonRainCodes = dayData
+      .map(d => d.weatherCode)
+      .filter(code => !isRainLikeWeatherCode(code));
+
+    if (nonRainCodes.length > 0) {
+      const counts = new Map();
+      for (const code of nonRainCodes) {
+        counts.set(code, (counts.get(code) || 0) + 1);
+      }
+      return Array.from(counts.entries())
+        .sort((a, b) => b[1] - a[1] || a[0] - b[0])[0][0];
+    }
+
+    return 3; // fallback: bewolkt
+  }
+
+  return severityCode;
+}
+
 function processWeatherData(apiData) {
   const allDays = getWeekDates();
   const hourlyTimes = apiData.hourly.time.map(t => new Date(t));
@@ -399,11 +438,7 @@ function processWeatherData(apiData) {
       ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length)
       : 0;
 
-    // Dominante weathercode: neem het "zwaarste" weer van de dag
-    const codes = dayData.map(d => d.weatherCode);
-    const dominantWeatherCode = codes.length > 0
-      ? codes.reduce((worst, c) => c > worst ? c : worst, 0)
-      : 0;
+    const dominantWeatherCode = pickDisplayWeatherCode(dayData);
 
     return {
       label,
