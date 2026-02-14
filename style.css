@@ -875,6 +875,11 @@ footer {
 
 
 /* ========== EMBED DAY CARD MODE ========== */
+body.embed-daycard {
+  background: transparent;
+  min-height: auto;
+}
+
 body.embed-daycard #app-header,
 body.embed-daycard #location-modal,
 body.embed-daycard #pull-indicator,
@@ -886,14 +891,20 @@ body.embed-daycard #app-main {
   max-width: 380px;
   width: 100%;
   padding: 0;
+  background: transparent;
 }
 
 body.embed-daycard #forecast {
   padding: 0;
+  background: transparent;
 }
 
 body.embed-daycard #day-cards .day-card {
   margin: 0;
+}
+
+body.embed-daycard .hourly-detail {
+  background: #0b1d3a;
 }
 
 @media (max-width: 420px) {
