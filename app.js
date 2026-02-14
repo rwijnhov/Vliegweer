@@ -580,7 +580,6 @@ function buildDayCardHTML(dayData, id) {
         <div class="weather-banner-overlay">
           <h2 class="day-name">${dayLabelHtml}</h2>
           <div class="day-date">${dayData.dateFormatted}</div>
-          <div class="weather-desc">${dayData.weatherDesc}</div>
         </div>
       </div>
       <div class="time-slots">
