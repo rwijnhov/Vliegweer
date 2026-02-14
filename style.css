@@ -305,6 +305,12 @@ body {
   gap: 10px;
 }
 
+@media (max-width: 620px) {
+  .cards-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .cards-row.today-row {
   grid-template-columns: minmax(280px, 420px);
   justify-content: center;
@@ -685,6 +691,7 @@ body {
 
 .slot-details {
   align-self: stretch;
+  min-width: 0;
 }
 
 .slot-details-extended {
@@ -710,11 +717,28 @@ body {
 
 .detail-label {
   color: #d7dde8;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .detail-value {
   color: #ffffff;
   font-variant-numeric: tabular-nums;
+  text-align: right;
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .detail-row {
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    gap: 4px;
+    font-size: 0.7rem;
+  }
+
+  .detail-icon {
+    width: 16px;
+    font-size: 0.8rem;
+  }
 }
 
 .no-data {
