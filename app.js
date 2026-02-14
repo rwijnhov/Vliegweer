@@ -481,6 +481,7 @@ function renderForecast(days) {
   const activeDays = days.filter(d => d.hourly.length > 0);
   const todayOnly = document.body?.dataset?.view === 'today';
   const dayCardOnly = document.body?.classList?.contains('embed-daycard');
+  const expandHourlyByDefault = dayCardOnly;
 
   if (todayOnly) {
     const today = new Date();
@@ -488,11 +489,11 @@ function renderForecast(days) {
     const todayData = activeDays.find(d => isSameDay(d.date, today));
     if (dayCardOnly) {
       container.innerHTML = todayData
-        ? buildDayCardHTML(todayData, 'today')
+        ? buildDayCardHTML(todayData, 'today', { expandHourlyByDefault })
         : '<p class="empty-day-message">Geen data beschikbaar voor vandaag.</p>';
     } else {
       container.innerHTML = todayData
-        ? `<h3 class="weekend-heading">Vandaag</h3><div class="cards-row today-row">${buildDayCardHTML(todayData, 'today')}</div>`
+        ? `<h3 class="weekend-heading">Vandaag</h3><div class="cards-row today-row">${buildDayCardHTML(todayData, 'today', { expandHourlyByDefault })}</div>`
         : '<p class="empty-day-message">Geen data beschikbaar voor vandaag.</p>';
     }
 
@@ -537,7 +538,7 @@ function renderForecast(days) {
     html += `<h3 class="weekend-heading">${label}</h3>`;
     html += '<div class="cards-row">';
     weekDays.forEach((day, i) => {
-      html += buildDayCardHTML(day, `d${weekIdx * 7 + i}`);
+      html += buildDayCardHTML(day, `d${weekIdx * 7 + i}`, { expandHourlyByDefault });
     });
     html += '</div>';
     weekIdx++;
@@ -580,9 +581,12 @@ function weatherCodeToClass(code) {
   return 'weather-cloudy';
 }
 
-function buildDayCardHTML(dayData, id) {
+function buildDayCardHTML(dayData, id, options = {}) {
+  const { expandHourlyByDefault = false } = options;
   const weatherClass = weatherCodeToClass(dayData.weatherCode);
   const dayLabelHtml = formatDayLabelHTML(dayData.label, dayData.date);
+  const expandButtonLabel = expandHourlyByDefault ? 'Uurlijks detail ▲' : 'Uurlijks detail ▼';
+  const hourlyDetailClass = expandHourlyByDefault ? 'hourly-detail expanded' : 'hourly-detail';
   return `
     <div class="day-card">
       <div class="weather-banner ${weatherClass}">
@@ -595,8 +599,8 @@ function buildDayCardHTML(dayData, id) {
         ${buildSlotHTML(dayData.morning, 'Ochtend')}
         ${buildSlotHTML(dayData.afternoon, 'Middag')}
       </div>
-      <button class="expand-btn">Uurlijks detail ▼</button>
-      <div class="hourly-detail">${buildHourlyHTML(dayData.hourly)}</div>
+      <button class="expand-btn">${expandButtonLabel}</button>
+      <div class="${hourlyDetailClass}">${buildHourlyHTML(dayData.hourly)}</div>
     </div>`;
 }
 
