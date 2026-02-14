@@ -2,6 +2,18 @@
 
 Kleine webapp (HTML/CSS/JS) voor vliegweer-info.
 
+
+## Vandaag als losse day card (embed)
+
+Wil je op de `today`-pagina alleen de day card tonen (bijv. voor een externe iframe/embed)?
+Gebruik dan:
+
+```text
+today.html?embed=day-card
+```
+
+In deze modus worden header, footer en locatie-modal verborgen, zodat alleen de kaart-inhoud overblijft.
+
 ## Code aanpassen
 
 1. Open het project in je editor.

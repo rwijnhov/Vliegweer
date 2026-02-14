@@ -434,14 +434,21 @@ function renderForecast(days) {
 
   const activeDays = days.filter(d => d.hourly.length > 0);
   const todayOnly = document.body?.dataset?.view === 'today';
+  const dayCardOnly = document.body?.classList?.contains('embed-daycard');
 
   if (todayOnly) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayData = activeDays.find(d => isSameDay(d.date, today));
-    container.innerHTML = todayData
-      ? `<h3 class="weekend-heading">Vandaag</h3><div class="cards-row today-row">${buildDayCardHTML(todayData, 'today')}</div>`
-      : '<p class="empty-day-message">Geen data beschikbaar voor vandaag.</p>';
+    if (dayCardOnly) {
+      container.innerHTML = todayData
+        ? buildDayCardHTML(todayData, 'today')
+        : '<p class="empty-day-message">Geen data beschikbaar voor vandaag.</p>';
+    } else {
+      container.innerHTML = todayData
+        ? `<h3 class="weekend-heading">Vandaag</h3><div class="cards-row today-row">${buildDayCardHTML(todayData, 'today')}</div>`
+        : '<p class="empty-day-message">Geen data beschikbaar voor vandaag.</p>';
+    }
 
     container.querySelectorAll('.expand-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -509,6 +516,11 @@ function renderForecast(days) {
 
   document.getElementById('last-updated').textContent =
     new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+}
+
+function isDayCardEmbedMode() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('embed') === 'day-card';
 }
 
 function weatherCodeToClass(code) {
@@ -786,6 +798,10 @@ async function registerServiceWorker() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (isDayCardEmbedMode()) {
+    document.body.classList.add('embed-daycard');
+  }
+
   registerServiceWorker();
   setupEventListeners();
   loadWeather();
