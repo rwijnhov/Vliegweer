@@ -660,7 +660,7 @@ function buildSlotHTML(slotData, title) {
         <div class="detail-row">
           <span class="detail-icon">💨</span>
           <span class="detail-label">Wind bft</span>
-          <span class="detail-value">${slotData.beaufort} (max ${slotData.maxBeaufort})</span>
+          <span class="detail-value">${slotData.beaufort} </span>
         </div>
       </div>
     </div>`;
