@@ -828,3 +828,25 @@ footer {
 .pull-indicator.visible {
   transform: translateX(-50%) translateY(0);
 }
+
+
+/* ========== EMBED DAY CARD MODE ========== */
+body.embed-daycard #app-header,
+body.embed-daycard #location-modal,
+body.embed-daycard #pull-indicator,
+body.embed-daycard footer {
+  display: none !important;
+}
+
+body.embed-daycard #app-main {
+  max-width: 420px;
+  padding: 0;
+}
+
+body.embed-daycard #forecast {
+  padding: 0;
+}
+
+body.embed-daycard #day-cards .day-card {
+  margin: 0;
+}
