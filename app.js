@@ -639,7 +639,7 @@ function buildSlotHTML(slotData, title) {
         </div>
         <div class="detail-row">
           <span class="detail-icon">🌧️</span>
-          <span class="detail-label">Regen</span>
+          <span class="detail-label">Kans</span>
           <span class="detail-value">${slotData.rainChance}%</span>
         </div>
         <div class="detail-row">
