@@ -421,12 +421,21 @@ function processWeatherData(apiData) {
       if (entries.length === 0) return null;
       const avg = (arr) => Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
       const avgWind = entries.reduce((s, e) => s + e.windSpeed, 0) / entries.length;
+      const clearHours = entries.filter(e => e.weatherCode <= 2).length;
+      const rainHours = entries.filter(e => e.precipProb >= 40 || e.precip >= 0.2).length;
+      const precipTotal = entries.reduce((s, e) => s + e.precip, 0);
+
       return {
         avgWind: avgWind.toFixed(1),
         beaufort: kmhToBeaufort(avgWind),
         maxWind: Math.max(...entries.map(e => e.windSpeed)).toFixed(1),
         maxBeaufort: Math.max(...entries.map(e => e.beaufort)),
         avgTemp: (entries.reduce((s, e) => s + e.temp, 0) / entries.length).toFixed(1),
+        minTemp: Math.min(...entries.map(e => e.temp)).toFixed(1),
+        maxTemp: Math.max(...entries.map(e => e.temp)).toFixed(1),
+        sunChance: Math.round((clearHours / entries.length) * 100),
+        rainChance: Math.round((rainHours / entries.length) * 100),
+        precipTotal: precipTotal.toFixed(1),
         maxPrecipProb: Math.max(...entries.map(e => e.precipProb)),
         dominantDir: degreesToCompass(
           circularMeanDegrees(entries.map(e => e.windDir))
@@ -606,7 +615,7 @@ function buildSlotHTML(slotData, title) {
     return `<div class="slot">
       <h3>${title}</h3>
       <div class="slot-airplane"><div style="color:var(--text-secondary)">${AIRPLANE_SVG_SMALL}</div></div>
-      <div class="slot-score">--</div>
+      <div class="slot-score-display"><span class="slot-score">--</span></div>
       <p class="no-data">Geen data</p>
     </div>`;
   }
@@ -622,22 +631,36 @@ function buildSlotHTML(slotData, title) {
         <span class="slot-score-label">/ 100</span>
       </div>
       <div class="slot-text" style="color:${color}">${label}</div>
-      <div class="slot-details">
+      <div class="slot-details slot-details-extended">
         <div class="detail-row">
-          <span class="detail-icon">💨</span>
-          <span>Bft ${slotData.beaufort} (max ${slotData.maxBeaufort})</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-icon">🌡️</span>
-          <span>${slotData.avgTemp}°C</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-icon">🧭</span>
-          <span>${slotData.dominantDir}</span>
+          <span class="detail-icon">☀️</span>
+          <span class="detail-label">Zon</span>
+          <span class="detail-value">${slotData.sunChance}%</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🌧️</span>
-          <span>${slotData.maxPrecipProb}% kans</span>
+          <span class="detail-label">Regen</span>
+          <span class="detail-value">${slotData.rainChance}%</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🌧️</span>
+          <span class="detail-label">Neerslag</span>
+          <span class="detail-value">${slotData.precipTotal} mm</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🌡️</span>
+          <span class="detail-label">Temp min/max</span>
+          <span class="detail-value">${slotData.minTemp}/${slotData.maxTemp}°C</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🧭</span>
+          <span class="detail-label">Richting</span>
+          <span class="detail-value">${slotData.dominantDir}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">💨</span>
+          <span class="detail-label">Wind bft</span>
+          <span class="detail-value">${slotData.beaufort} (max ${slotData.maxBeaufort})</span>
         </div>
       </div>
     </div>`;
