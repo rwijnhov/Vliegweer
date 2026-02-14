@@ -346,10 +346,12 @@ function pickDisplayWeatherCode(dayData) {
 
   const maxPrecipProb = Math.max(...dayData.map(d => d.precipProb));
   const maxPrecipMm = Math.max(...dayData.map(d => d.precip));
+  const hasNoRainChance = maxPrecipProb <= 0;
+  const hasNoMeasuredRain = maxPrecipMm <= 0.05;
 
   // Als modelcode regen zegt, maar kans én neerslag beide 0 zijn,
   // toon liever een niet-regen code zodat banner en kans niet botsen.
-  if (isRainLikeWeatherCode(severityCode) && maxPrecipProb === 0 && maxPrecipMm === 0) {
+  if (isRainLikeWeatherCode(severityCode) && hasNoRainChance && hasNoMeasuredRain) {
     const nonRainCodes = dayData
       .map(d => d.weatherCode)
       .filter(code => !isRainLikeWeatherCode(code));
