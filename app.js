@@ -29,7 +29,7 @@ const CONFIG = {
 
 const SCORE_COLORS = {
   green: '#4CAF50',
-  yellow: '#FFC107',
+  yellow: '#1E88E5',
   orange: '#FF9800',
   red: '#F44336'
 };
