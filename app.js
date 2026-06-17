@@ -300,31 +300,36 @@ async function forwardGeocode(query) {
 
 // ---------- API FETCHING ----------
 
-async function fetchWeatherData(lat, lon) {
+async function fetchWeatherData(lat, lon, forceRefresh = false) {
   const cacheKey = `${lat.toFixed(2)}_${lon.toFixed(2)}`;
-  try {
-    const cached = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY_CACHE) || '{}');
-    if (cached.key === cacheKey && Date.now() - cached.timestamp < CONFIG.CACHE_MAX_AGE_MS) {
-      return cached.data;
-    }
-  } catch { /* ignore */ }
+
+  // Sla de localStorage-cache over bij een bewuste verversing
+  if (!forceRefresh) {
+    try {
+      const cached = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY_CACHE) || '{}');
+      if (cached.key === cacheKey && Date.now() - cached.timestamp < CONFIG.CACHE_MAX_AGE_MS) {
+        return { data: cached.data, fetchedAt: cached.timestamp };
+      }
+    } catch { /* ignore */ }
+  }
 
   const url = `${CONFIG.API_BASE}?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,windspeed_10m,winddirection_10m,precipitation_probability,precipitation,weathercode&timezone=Europe/Amsterdam&forecast_days=16`;
-  const response = await fetch(url);
+  const response = await fetch(url, { cache: 'no-store' });
   if (!response.ok) {
     throw new Error(`API fout: ${response.status}`);
   }
   const data = await response.json();
 
+  const now = Date.now();
   try {
     localStorage.setItem(CONFIG.STORAGE_KEY_CACHE, JSON.stringify({
       key: cacheKey,
-      timestamp: Date.now(),
+      timestamp: now,
       data
     }));
   } catch { /* storage full */ }
 
-  return data;
+  return { data, fetchedAt: now };
 }
 
 
@@ -471,7 +476,7 @@ function processWeatherData(apiData) {
 // ---------- UI RENDERING ----------
 
 
-function renderForecast(days) {
+function renderForecast(days, fetchedAt = Date.now()) {
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('error-state').classList.add('hidden');
   document.getElementById('forecast').classList.remove('hidden');
@@ -512,7 +517,7 @@ function renderForecast(days) {
     });
 
     document.getElementById('last-updated').textContent =
-      new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+      new Date(fetchedAt).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
     return;
   }
 
@@ -562,7 +567,7 @@ function renderForecast(days) {
   });
 
   document.getElementById('last-updated').textContent =
-    new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+    new Date(fetchedAt).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
 }
 
 function isDayCardEmbedMode() {
@@ -740,7 +745,7 @@ function setupEventListeners() {
       const name = await reverseGeocode(loc.lat, loc.lon);
       saveLocation(loc.lat, loc.lon, name);
       document.getElementById('location-modal').classList.add('hidden');
-      loadWeather();
+      loadWeather(true);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -767,7 +772,7 @@ function setupEventListeners() {
       saveLocation(loc.lat, loc.lon, loc.name);
       document.getElementById('location-modal').classList.add('hidden');
       document.getElementById('location-input').value = '';
-      loadWeather();
+      loadWeather(true);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -784,7 +789,7 @@ function setupEventListeners() {
   });
 
   // Retry button
-  document.getElementById('retry-btn').addEventListener('click', loadWeather);
+  document.getElementById('retry-btn').addEventListener('click', () => loadWeather(true));
 
   // Pull-to-refresh
   let touchStartY = 0;
@@ -812,15 +817,24 @@ function setupEventListeners() {
     const diff = e.changedTouches[0].clientY - touchStartY;
     pullIndicator.classList.remove('visible');
     if (diff > 80 && window.scrollY === 0) {
-      loadWeather();
+      loadWeather(true);
     }
   }, { passive: true });
+
+  // Ververs verse data zodra de app weer op de voorgrond komt.
+  // Op een bevroren PWA draait DOMContentLoaded niet opnieuw, dus dit
+  // voorkomt dat je oude data van uren geleden blijft zien.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      loadWeather(true);
+    }
+  });
 }
 
 
 // ---------- MAIN LOAD FUNCTION ----------
 
-async function loadWeather() {
+async function loadWeather(forceRefresh = false) {
   showLoading();
 
   try {
@@ -836,9 +850,9 @@ async function loadWeather() {
 
     document.getElementById('location-name').textContent = location.name;
 
-    const apiData = await fetchWeatherData(location.lat, location.lon);
-    const days = processWeatherData(apiData);
-    renderForecast(days);
+    const { data, fetchedAt } = await fetchWeatherData(location.lat, location.lon, forceRefresh);
+    const days = processWeatherData(data);
+    renderForecast(days, fetchedAt);
 
   } catch (err) {
     console.error('Weather load error:', err);
